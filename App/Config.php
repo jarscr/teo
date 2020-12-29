@@ -5,8 +5,16 @@ namespace App;
 /**
  * Application configuration
  *
- * PHP version 7.0
- */
+ * Requiere PHP7.3
+ * 
+ * Desarrolla JARS Costa Rica
+ * www.jarscr.com
+ * Telefono: 4000-2528
+ * 
+ * Programador: Alfredo Rodriguez
+ * 
+ **/
+
 class Config
 {
 
@@ -14,25 +22,31 @@ class Config
      * Database host
      * @var string
      */
-    const DB_HOST = 'your-database-host';
+    const DB_HOST = 'localhost';
 
     /**
      * Database name
      * @var string
      */
-    const DB_NAME = 'your-database-name';
+    const DB_NAME = 'teo';
 
     /**
      * Database user
      * @var string
      */
-    const DB_USER = 'your-database-user';
+    const DB_USER = 'teo';
 
     /**
      * Database password
      * @var string
      */
-    const DB_PASSWORD = 'your-database-password';
+    const DB_PASSWORD = 'teo';
+
+    /**
+    * Version
+     * @var string
+    */
+    const VERSION = '1.0.2';
 
     /**
      * Show or hide error messages on screen

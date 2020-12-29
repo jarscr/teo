@@ -32,4 +32,56 @@ abstract class Model
 
         return $db;
     }
+
+    protected static function getCredits()
+    {
+     
+        static $creditos = null;
+        if ($creditos === null) {
+        $creditos = array('year'=>date('Y'),
+                'version'=> Config::VERSION,
+                'name'=>'TEO Simple PHP Framework',
+                'development'=>'JARS Costa Rica',
+                'description' =>'TEO Simple PHP Framework for building web applications in PHP',
+                'keywords' => 'teo,framework, jarscr, php, free'
+            );
+        }
+        return $creditos;
+    }
+
+    protected static function getLang()
+    {
+        static $lang = null;
+        if ($lang === null) {
+        $lang = array('users'=>'Users',
+                'year'=>date('Y'),
+                'home'=>'Home',
+                'services'=>'Services',
+                'help'=>'Help',
+                'clients'=>'Clients',
+                'search'=>'Search',
+                'aboutUs'=>'About Us'
+            );
+        }
+        return $lang;
+    }
+
+    protected static function getModules()
+        {
+            static $modules = null;
+            if ($modules === null) {
+                $modules = array(
+                        array(
+                    'title'=>'Home',
+                    'router'=>'/',
+                    'icon'=>'house-fill'
+                    ),
+                        array(
+                    'title'=>'About Us',
+                    'router'=>'#',
+                    'icon'=>'building'
+                        ));
+                return $modules;
+            }
+        }
 }

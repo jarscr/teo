@@ -9,9 +9,9 @@
 <a href="https://packagist.org/packages/jarscr/teo"><img src="https://img.shields.io/packagist/l/jarscr/teo" alt="License"></a>
 </p>
 
-# About TEO
+# About TEO Simple PHP Framework
 
-This is a simple MVC framework for building web applications in PHP. It's free and [open-source](LICENSE). 
+TEO Simple PHP Framework for building web applications in PHP. It's free and [open-source](LICENSE). 
 
 This project is based in the MVC <a href="https://github.com/daveh/php-mvc">daveh/php-mvc</a>
 

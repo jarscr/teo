@@ -4,7 +4,14 @@
 
 {% block body %}
 
-    <h1>Welcome</h1>
+<h1>Welcome</h1>
+
+
+<ul>
+    {% for User in users %}
+    <li>{{ User.user_id }} - {{ User.username }}</li>
+    {% endfor %}
+</ul>
 
 
 

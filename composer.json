@@ -1,11 +1,11 @@
 {
     "name": "jarscr/teo",
     "type": "project",
-    "description": "PHP MVC framework for building web applications in PHP 7.3",
+    "description": "TEO Simple PHP Framework for building web applications in PHP",
     "keywords": ["mvc","framework","php","costa rica","web","jarscr","teo"],
     "homepage": "https://github.com/jarscr/teo",
     "license": "MIT",
-    "version":"1.0.1-dev",
+    "version":"1.0.2",
     "authors": [
         {
             "name": "Alfredo Rodríguez",
