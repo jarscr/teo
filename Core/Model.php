@@ -8,8 +8,16 @@ use App\Config;
 /**
  * Base model
  *
- * PHP version 7.0
- */
+ * Requiere PHP7.3
+ * 
+ * Desarrolla JARS Costa Rica
+ * www.jarscr.com
+ * Telefono: 4000-2528
+ * 
+ * Programador: Alfredo Rodriguez
+ * 
+ **/
+
 abstract class Model
 {
 

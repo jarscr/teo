@@ -3,8 +3,16 @@
 /**
  * Front controller
  *
- * PHP version 7.0
- */
+ * Requiere PHP7.3
+ * 
+ * Desarrolla JARS Costa Rica
+ * www.jarscr.com
+ * Telefono: 4000-2528
+ * 
+ * Programador: Alfredo Rodriguez
+ * 
+ **/
+
 
 /**
  * Composer
@@ -28,5 +36,4 @@ $router = new Core\Router();
 // Add the routes
 $router->add('', ['controller' => 'Home', 'action' => 'index']);
 $router->add('{controller}/{action}');
-$router->add('login', ['controller' => 'Login', 'action' => 'index']);
 $router->dispatch($_SERVER['QUERY_STRING']);
