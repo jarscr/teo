@@ -6,5 +6,5 @@ install:
 script: php public/index.php
 services:
   - mysql
-  before_install:
+before_install:
   - mysql -u root --password="" < teo.sql
