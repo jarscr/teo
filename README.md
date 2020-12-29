@@ -2,8 +2,10 @@
 
 
 <p align="center">
+[![PHP ^7.3](https://img.shields.io/badge/PHP-^7.3-brightgreen.svg?style=flat-square)](https://php.net)
 <a href="https://packagist.org/packages/jarscr/teo"><img src="https://img.shields.io/packagist/dt/jarscr/teo" alt="Total Downloads"></a>
 <a href="https://packagist.org/packages/jarscr/teo"><img src="https://img.shields.io/packagist/v/jarscr/teo" alt="Latest Stable Version"></a>
+[![Build Status](https://img.shields.io/travis/github/jarscr/teo.svg?style=flat-square)](https://travis-ci.com/github/jarscr/teo)
 <a href="https://packagist.org/packages/jarscr/teo"><img src="https://img.shields.io/packagist/l/jarscr/teo" alt="License"></a>
 </p>
 
