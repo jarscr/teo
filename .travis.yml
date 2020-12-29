@@ -1,3 +1,6 @@
 language: php
 php:
 - '7.3'
+install:
+  - composer install
+script: php public/index.php
