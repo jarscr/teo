@@ -5,7 +5,7 @@
 <a href="https://packagist.org/packages/jarscr/teo"><img src="https://img.shields.io/badge/PHP-^7.3-brightgreen.svg?style=flat-square" alt="PHP Version">
 <a href="https://packagist.org/packages/jarscr/teo"><img src="https://img.shields.io/packagist/dt/jarscr/teo" alt="Total Downloads"></a>
 <a href="https://packagist.org/packages/jarscr/teo"><img src="https://img.shields.io/packagist/v/jarscr/teo" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/jarscr/teo"><img src="https://img.shields.io/travis/github/jarscr/teo.svg?style=flat-square" alt="Build Status">
+<a href="https://packagist.org/packages/jarscr/teo"><img src="https://img.shields.io/travis/jarscr/teo.svg?style=flat-square" alt="Build Status">
 <a href="https://packagist.org/packages/jarscr/teo"><img src="https://img.shields.io/packagist/l/jarscr/teo" alt="License"></a>
 </p>
 
