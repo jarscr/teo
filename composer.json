@@ -16,23 +16,20 @@
     ],
     "require": {
         "php": "~7.3",
-        "twig/twig": "~3.0",
-        "symfony/polyfill-mbstring": "^1.10",       
-        "psr/log": "^1.1",
-        "mpdf/mpdf": "^8.0",
+        "aws/aws-sdk-php": "^3.171",
         "delight-im/auth": "^8.2",
+        "mpdf/mpdf": "^8.0",
+        "phpmailer/phpmailer": "^6.2",
         "phpoffice/phpspreadsheet": "^1.14",
-        "doctrine/annotations": "^1.10",
-        "doctrine/collections": "^1.6",
-        "doctrine/migrations": "^3.0",
-        "doctrine/common": "^3.0",
-        "doctrine/inflector": "^2.0",
+        "psr/log": "^1.1",
+        "sentry/sdk": "^3.1",
+        "symfony/polyfill-mbstring": "^1.10",
         "symfony/yaml": "^5.1",
-        "aws/aws-sdk-php": "^3.171"
+        "twig/twig": "~3.0"
     },
     "require-dev": {
-        "sentry/sdk": "^3.0",
-        "phpunit/phpunit": "^9.3.3"
+        "phpunit/phpunit": "^9.3.3",
+        "kint-php/kint": "^3.3"
     },
     "config": {
         "optimize-autoloader": true,
