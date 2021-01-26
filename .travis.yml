@@ -1,9 +1,52 @@
+sudo: required
+dist: trusty
 language: php
 php:
 - '7.3'
+addons:
+  hosts:
+    - local.dev
+cache:
+  - apt
 install:
+  - install-apache.sh
   - composer install
-script: php public/index.php
+script: 
+ # Do a lookup on local.dev hostname set above 
+  - nslookup local.dev
+  # Do an Apache Config Test
+  - sudo apache2ctl configtest
+  # Check Apache Version
+  - sudo apache2 -v
+  # Check PHP Version
+  - sudo php -v
+  # Check if the site responds OK
+  - curl -vsf 'http://local.dev:80/' &> /dev/stdout
+  # Test if PHP is working
+  - curl -vsf 'http://local.dev:80/' &> /dev/stdout
+  # Test a Good User-Agent String against our site (later we test bad bots here)
+  - curl -A "googlebot" http://local.dev:80/ &> /dev/stdout
+  # Test Some Bad Bots and Referrers
+  - STATUSCODE=$(curl -A "80legs" http://local.dev:80/ &> /dev/stderr --write-out "%{http_code}") | if test $STATUSCODE 403; then exit 0; fi
+  - STATUSCODE=$(curl -A "masscan" http://local.dev:80/ &> /dev/stderr --write-out "%{http_code}") | if test $STATUSCODE 403; then exit 0; fi
+  - STATUSCODE=$(curl -I http://local.dev:80/ -e http://100dollars-seo.com &> /dev/stderr --write-out "%{http_code}") | if test $STATUSCODE 403; then exit 0; fi
+  - STATUSCODE=$(curl -I http://local.dev:80/ -e http://zx6.ru &> /dev/stderr --write-out "%{http_code}") | if test $STATUSCODE 403; then exit 0; fi
+  - cat /tmp/error.log
+before_deploy:
+  - deploy.sh
+deploy:
+  provider: releases
+  api_key:
+    secure: ${GH_TOKEN}
+  file:
+  - "README.md"
+  skip_cleanup: true
+  on:
+    repo: jarscr/teo
+    tags: false
+    all_branches: true
+notifications:
+    email: false
 services:
   - mysql
 before_install:
