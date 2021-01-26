@@ -1,6 +1,15 @@
+language: php
+env:
+  global:
+    - secure: I/8TWUxe4NJp47f4pKhndulMqKiz4kM562eSPGYFrKWnvTlKgu/4O8pHsVRhtTyhrUdYaK9A0FhqecaxaA9ASiG3ATQ3wgJMJcjve2BzAA1eCO9n64/u5y9vuNJWPQ/LApaH5AZZPTcrDPRwtPWCPpOfB66Gek0xX67Bsu8vOEKuDOXzPqll/km7FJqGdLlR2J7jP1J8JnAq36uN54Gc7NecZjLiRwPEVvFoWW7mlQxmyOcj6Qu92nY+pODhy9CvS+XL1XB80nMggAZSARhOgPv7C9gjw/HGUZ8AZqZ85DkBXW5Watbk3XDEyVkMse73asihnoXz5rAELEoSDlWTtONaZLLi2tpWJdJzVLxTVVM2wp9E8uZnCD7w3MfZWeYy6E06hKfBkN2U7w0DKho48OL4u/QDLh1rOa67qfejwoPRNgInIb4eK0i/x5+Gg7r22s0iU+qRGGlkZNHjLbg2yEbcJZ7g0Wiu91fhPZNbirvx+YOFekfXQit0CdKo/kTqR0PDtG0StowDi1359to+Zkn24EE2l+Xiw1IPKNX6ag2ph2hLN6+4JIHghLPNoarfFJtCVXLrOobpIxMN/hLY1FZ9we27beJ/mTTClJAAG9jCXzERMOcHOWCjdd44kas5VaAeyEfu9Mm3ZXu5e0H5bFzaNRRnqb3qDGgY7pjuLDM=
+    - GIT_NAME: Travis CI
+    - GIT_EMAIL: builds@travis-ci.org
+    - TRAVIS_REPO_SLUG: jarscr/teo
+    - GIT_BRANCH: master
+matrix:
+  fast_finish: true
 sudo: required
 dist: trusty
-language: php
 php:
 - '7.3'
 addons:
