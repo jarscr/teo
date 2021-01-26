@@ -9,9 +9,9 @@
 <a href="https://packagist.org/packages/jarscr/teo"><img src="https://img.shields.io/packagist/l/jarscr/teo" alt="License"></a>
 </p>
 
-# About TEO Simple PHP Framework
+# Acerca de TEO Simple PHP Framework
 
-TEO Es un Framework Simple en PHP para construir aplicaciones Web y Sitios Web. Es gratis y [open-source](LICENSE). 
+TEO es un Framework en PHP para construir aplicaciones Web y Sitios Web. Es gratis y [open-source](LICENSE). 
 
 Este proyecto esta basado en MVC <a href="https://github.com/daveh/php-mvc">daveh/php-mvc</a>
 
@@ -29,36 +29,36 @@ Revisa las instrucciones para que puedas usar este framework.
 
 Configuration settings are stored in the [App/Config.php](App/Config.php) class. Default settings include database connection data and a setting to show or hide error detail. You can access the settings in your code like this: `Config::DB_HOST`. You can add your own configuration settings in here.
 
-## Routing
+## Rutas
 
-The [Router](Core/Router.php) translates URLs into controllers and actions. Routes are added in the [front controller](public/index.php). A sample home route is included that routes to the `index` action in the [Home controller](App/Controllers/Home.php).
+Las [Rutas](Core/Router.php) traduce las URL en controladores y acciones. Las rutas se agregan en el [controlador] (public/index.php). Se incluye una ruta de inicio de muestra que se enruta a la acción `index` en el [controlador de home](App/Controllers/Home.php).
 
-Routes are added with the `add` method. You can add fixed URL routes, and specify the controller and action, like this:
+Las rutas se agregan con el método `add`. Puede agregar rutas URL fijas y especificar el controlador y la acción, así:
 
 ```php
 $router->add('', ['controller' => 'Home', 'action' => 'index']);
 $router->add('posts/index', ['controller' => 'Posts', 'action' => 'index']);
 ```
 
-Or you can add route **variables**, like this:
+O puede agregar **variables** de ruta, así:
 
 ```php
 $router->add('{controller}/{action}');
 ```
 
-In addition to the **controller** and **action**, you can specify any parameter you like within curly braces, and also specify a custom regular expression for that parameter:
+Además de **controller** y **action**, puede especificar cualquier parámetro que desee entre llaves y también especificar una expresión regular personalizada para ese parámetro:
 
 ```php
 $router->add('{controller}/{id:\d+}/{action}');
 ```
 
-You can also specify a namespace for the controller:
+También puede especificar un espacio de nombres para el controlador:
 
 ```php
 $router->add('admin/{controller}/{action}', ['namespace' => 'Admin']);
 ```
 
-## Controllers
+## Controladores
 
 Controllers respond to user actions (clicking on a link, submitting a form etc.). Controllers are classes that extend the [Core\Controller](Core/Controller.php) class.
 
