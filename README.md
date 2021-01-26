@@ -11,21 +11,21 @@
 
 # About TEO Simple PHP Framework
 
-TEO Simple PHP Framework for building web applications in PHP. It's free and [open-source](LICENSE). 
+TEO Es un Framework Simple en PHP para construir aplicaciones Web y Sitios Web. Es gratis y [open-source](LICENSE). 
 
-This project is based in the MVC <a href="https://github.com/daveh/php-mvc">daveh/php-mvc</a>
+Este proyecto esta basado en MVC <a href="https://github.com/daveh/php-mvc">daveh/php-mvc</a>
 
-## Starting an application using this framework
+## Iniciar usando el framework
 
-1. First, install project with **composer create-project jarscr/teo example-app**.
-1. Run **composer update** to install the project dependencies.
-1. Configure your web server to have the **public** folder as the web root.
-1. Open [App/Config.php](App/Config.php) and enter your database configuration data.
-1. Create routes, add controllers, views and models.
+1. Primero, instale el proyecto con **composer create-project jarscr/teo app-ejemplo**.
+1. Ejecuta **composer update** para instalar las dependecias.
+1. Configure el servidor web para que apunte a la carpeta **public** como web root.
+1. Abra [App/Config.php](App/Config.php) y ingrese los datos de conexión con la base de datos.
+1. Crea rutas, agrega controladores, vistas y modelos.
 
-See below for more details.
+Revisa las instrucciones para que puedas usar este framework.
 
-## Configuration
+## Configuración
 
 Configuration settings are stored in the [App/Config.php](App/Config.php) class. Default settings include database connection data and a setting to show or hide error detail. You can access the settings in your code like this: `Config::DB_HOST`. You can add your own configuration settings in here.
 
