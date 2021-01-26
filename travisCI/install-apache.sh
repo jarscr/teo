@@ -11,7 +11,7 @@ sudo add-apt-repository -y ppa:ondrej/php
 sudo apt-get update
 sudo apt-get install -y --force-yes php7.3 libapache2-mod-php7.3 php7.3-fpm
 # Copy our virtual host template to sites-enabled overwriting the default site conf
-sudo cp defaultsite.tpl /etc/apache2/sites-available/000-default.conf
+sudo cp travisCI/defaultsite.tpl /etc/apache2/sites-available/000-default.conf
 # Copy basic testing files into /var/www
 sudo cp -R App /var/www/html/App
 sudo cp -R Core /var/www/html/Core
@@ -20,7 +20,7 @@ sudo cp .htaccess /var/www/html/.htaccess
 # Enable mod rewrite module
 sudo a2enmod rewrite
 # Set ServerName Globally
-sudo cp servername.tpl /etc/apache2/conf-available/servername.conf
+sudo cp travisCI/servername.tpl /etc/apache2/conf-available/servername.conf
 # Add testing of Apache Bad Bot Blocker
 
 sudo wget https://raw.githubusercontent.com/mitchellkrogza/apache-ultimate-bad-bot-blocker/master/custom.d/globalblacklist.conf

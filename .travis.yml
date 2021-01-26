@@ -9,7 +9,7 @@ addons:
 cache:
   - apt
 install:
-  - install-apache.sh
+  - travisCI/install-apache.sh
   - composer install
 script: 
  # Do a lookup on local.dev hostname set above 
@@ -33,7 +33,7 @@ script:
   - STATUSCODE=$(curl -I http://local.dev:80/ -e http://zx6.ru &> /dev/stderr --write-out "%{http_code}") | if test $STATUSCODE 403; then exit 0; fi
   - cat /tmp/error.log
 before_deploy:
-  - deploy.sh
+  - travisCI/deploy.sh
 deploy:
   provider: releases
   api_key:
