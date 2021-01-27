@@ -121,7 +121,8 @@ Se incluye una plantilla de muestra de Twig en [App/Views/Home/index.html](App/V
 
 ## Modelos
 
-Models are used to get and store data in your application. They know nothing about how this data is to be presented in the views. Models extend the `Core\Model` class and use [PDO](http://php.net/manual/en/book.pdo.php) to access the database. They're stored in the `App/Models` folder. A sample user model class is included in [App/Models/User.php](App/Models/User.php). You can get the PDO database connection instance like this:
+Los modelos se utilizan para obtener y almacenar datos en su aplicación. No saben nada sobre cómo se presentarán estos datos en las vistas. Los modelos extienden la clase `Core\Model` y usan [PDO] (http://php.net/manual/en/book.pdo.php) para acceder a la base de datos. Están almacenados en la carpeta `App/Models`. Se incluye una clase de modelo de usuario de muestra en [App/Models/User.php](App/Models/User.php). Puede obtener la instancia de conexión de la base de datos PDO de esta manera:
+
 
 ```php
 $db = static::getDB();
@@ -129,15 +130,20 @@ $db = static::getDB();
 
 ## Errores
 
-If the `SHOW_ERRORS` configuration setting is set to `true`, full error detail will be shown in the browser if an error or exception occurs. If it's set to `false`, a generic message will be shown using the [App/Views/404.html](App/Views/404.html) or [App/Views/500.html](App/Views/500.html) views, depending on the error.
+Si la configuración de `SHOW_ERRORS` se establece en `true`, el navegador mostrará todos los detalles del error si se produce un error o una excepción. Si se establece en `false`", se mostrará un mensaje genérico mediante [App/Views/404.html](App/Views/404.html) o [App/Views/500.html](App/Views/500.html) vistas, según el error.
 
-## Web server configuration
+En este proyecto usamos Sentry.io para monitorear los errores.
 
-Pretty URLs are enabled using web server rewrite rules. An [.htaccess](public/.htaccess) file is included in the `public` folder. Equivalent nginx configuration is in the [nginx-configuration.txt](nginx-configuration.txt) file.
+## Configuración del servidor web
+
+Las URL amigables se habilitan mediante reglas de reescritura del servidor web. Se incluye un archivo [.htaccess] (public/.htaccess) en la carpeta `public`. 
+
+La configuración equivalente de nginx se encuentra en el archivo [nginx-configuration.txt] (nginx-configuration.txt). 
+
 
 ---
 
-## License
+## Licencia
 
 Teo PHP MVC es un software open-sourced licenciado bajo [MIT license](https://opensource.org/licenses/MIT).
 

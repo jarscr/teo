@@ -32,7 +32,6 @@ before_script:
   - sudo cp travisCI/servername.tpl /etc/apache2/conf-available/servername.conf
   - sudo a2enconf servername
   - sudo service apache2 restart
-  - sudo service php7.3-fpm restart
 install:
   - composer install
 script: 
