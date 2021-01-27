@@ -45,7 +45,7 @@ script:
   # Check PHP Version
   - sudo php -v
   # Test a Good User-Agent String against our site (later we test bad bots here)
-  - curl -A "googlebot" http://local.dev:80/ &> /dev/stdout
+  - curl -A "googlebot" http://local.dev:80/
   # Test Some Bad Bots and Referrers
 deploy:
   provider: releases
