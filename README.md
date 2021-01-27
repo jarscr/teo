@@ -60,17 +60,19 @@ $router->add('admin/{controller}/{action}', ['namespace' => 'Admin']);
 
 ## Controladores
 
-Controllers respond to user actions (clicking on a link, submitting a form etc.). Controllers are classes that extend the [Core\Controller](Core/Controller.php) class.
+Los controladores responden a las acciones del usuario (hacer clic en un enlace, enviar un formulario, etc.). Los controladores son clases que amplían la clase [Core\Controller] (Core/Controller.php).
 
-Controllers are stored in the `App/Controllers` folder. A sample [Home controller](App/Controllers/Home.php) included. Controller classes need to be in the `App/Controllers` namespace. You can add subdirectories to organise your controllers, so when adding a route for these controllers you need to specify the namespace (see the routing section above).
+Los controladores se almacenan en la carpeta `App/Controllers`. Se incluye una muestra de [Home controller] (App/Controllers/Home.php). Las clases de controlador deben estar en el espacio de nombres `App/Controllers`. Puede agregar sub directorios para organizar sus controladores, por lo que al agregar una ruta para estos controladores, debe especificar el espacio de nombres (consulte la sección de enrutamiento anterior).
 
-Controller classes contain methods that are the actions. To create an action, add the **`Action`** suffix to the method name. The sample controller in [App/Controllers/Home.php](App/Controllers/Home.php) has a sample `index` action.
+Las clases de controlador contienen métodos que son las acciones. Para crear una acción, agregue el sufijo ** `Action` ** al nombre del método. El controlador de muestra en [App/Controllers/Home.php] (App/Controllers/Home.php) tiene una acción "index" de muestra.
 
-You can access route parameters (for example the **id** parameter shown in the route examples above) in actions via the `$this->route_params` property.
+Puede acceder a los parámetros de ruta (por ejemplo, el parámetro ** id ** que se muestra en los ejemplos de ruta anteriores) en acciones a través de la propiedad `$ this->route_params`.
+
 
 ### Action filters
 
-Controllers can have **before** and **after** filter methods. These are methods that are called before and after **every** action method call in a controller. Useful for authentication for example, making sure that a user is logged in before letting them execute an action. Optionally add a **before filter** to a controller like this:
+Los controladores pueden tener métodos de filtrado **before** y **after**. Estos son métodos que se llaman antes y después de **cada** llamada al método de acción en un controlador. Útil para la autenticación, por ejemplo, asegurarse de que un usuario haya iniciado sesión antes de permitirle ejecutar una acción. Opcionalmente, agregue un **antes del filtro** a un controlador como este:
+
 
 ```php
 /**
@@ -82,8 +84,7 @@ protected function before()
 {
 }
 ```
-
-To stop the originally called action from executing, return `false` from the before filter method. An **after filter** is added like this:
+Para detener la ejecución de la acción llamada originalmente, devuelve `false` del método de filtro anterior. Se agrega un **filtro posterior** así:
 
 ```php
 /**
@@ -96,9 +97,9 @@ protected function after()
 }
 ```
 
-## Views
+## Vistas
+Las vistas se utilizan para mostrar información (normalmente HTML). Los archivos de visualización van en la carpeta `App/Views`. Las vistas pueden estar en uno de dos formatos: PHP estándar, pero con PHP suficiente para mostrar los datos. Ningún acceso a la base de datos ni nada parecido debería ocurrir en un archivo de vista. Puede representar una vista PHP estándar en un controlador, opcionalmente pasando variables, como esta:
 
-Views are used to display information (normally HTML). View files go in the `App/Views` folder. Views can be in one of two formats: standard PHP, but with just enough PHP to show the data. No database access or anything like that should occur in a view file. You can render a standard PHP view in a controller, optionally passing in variables, like this:
 
 ```php
 View::render('Home/index.php', [
@@ -106,8 +107,8 @@ View::render('Home/index.php', [
     'colours' => ['red', 'green', 'blue']
 ]);
 ```
+El segundo formato utiliza el motor de plantillas [Twig] (http://twig.sensiolabs.org/). El uso de Twig le permite tener plantillas más simples y seguras que pueden aprovechar cosas como [herencia de plantillas] (http://twig.sensiolabs.org/doc/templates.html#template-inheritance). Puede renderizar una plantilla Twig como esta:
 
-The second format uses the [Twig](http://twig.sensiolabs.org/) templating engine. Using Twig allows you to have simpler, safer templates that can take advantage of things like [template inheritance](http://twig.sensiolabs.org/doc/templates.html#template-inheritance). You can render a Twig template like this:
 
 ```php
 View::renderTemplate('Home/index.html', [
@@ -115,10 +116,10 @@ View::renderTemplate('Home/index.html', [
     'colours' => ['red', 'green', 'blue']
 ]);
 ```
+Se incluye una plantilla de muestra de Twig en [App/Views/Home/index.html](App/Views/Home/index.html) que hereda de la plantilla base en [App/Views/base.html](App/Views/base.html).
 
-A sample Twig template is included in [App/Views/Home/index.html](App/Views/Home/index.html) that inherits from the base template in [App/Views/base.html](App/Views/base.html).
 
-## Models
+## Modelos
 
 Models are used to get and store data in your application. They know nothing about how this data is to be presented in the views. Models extend the `Core\Model` class and use [PDO](http://php.net/manual/en/book.pdo.php) to access the database. They're stored in the `App/Models` folder. A sample user model class is included in [App/Models/User.php](App/Models/User.php). You can get the PDO database connection instance like this:
 
@@ -126,7 +127,7 @@ Models are used to get and store data in your application. They know nothing abo
 $db = static::getDB();
 ```
 
-## Errors
+## Errores
 
 If the `SHOW_ERRORS` configuration setting is set to `true`, full error detail will be shown in the browser if an error or exception occurs. If it's set to `false`, a generic message will be shown using the [App/Views/404.html](App/Views/404.html) or [App/Views/500.html](App/Views/500.html) views, depending on the error.
 
@@ -140,6 +141,6 @@ Pretty URLs are enabled using web server rewrite rules. An [.htaccess](public/.h
 
 Teo PHP MVC es un software open-sourced licenciado bajo [MIT license](https://opensource.org/licenses/MIT).
 
-## Developer
+## Desarrolla
 
 <p align="center"><a href="https://jarscr.com" target="_blank"><img src="https://raw.githubusercontent.com/jarscr/teo/master/public/static/img/logos/logo-jarscr.png" width="182"></a></p>
