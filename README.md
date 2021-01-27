@@ -138,7 +138,7 @@ Pretty URLs are enabled using web server rewrite rules. An [.htaccess](public/.h
 
 ## License
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+Teo PHP MVC es un software open-sourced licenciado bajo [MIT license](https://opensource.org/licenses/MIT).
 
 ## Developer
 
