@@ -45,19 +45,9 @@ script:
   # Check PHP Version
   - sudo php -v
   # Test a Good User-Agent String against our site (later we test bad bots here)
-  - curl -A "googlebot" http://local.dev:80/
+  - curl -A "googlebot" http://local.dev:80/ &> /dev/stdout
   # Test Some Bad Bots and Referrers
-deploy:
-  provider: releases
-  api_key:
-    secure: ${GH_TOKEN}
-  file:
-  - "README.md"
-  skip_cleanup: true
-  on:
-    repo: jarscr/teo
-    tags: false
-    all_branches: true
+  - STATUSCODE=$(curl -I http://local.dev:80/ -e http://zx6.ru &> /dev/stderr --write-out "%{http_code}") | if test $STATUSCODE 500; then exit 0; fi
 notifications:
     email: false
 services:
