@@ -5,7 +5,7 @@
 <Directory "/var/www/html">
 Options +Includes
 Options +FollowSymLinks -Indexes
-
+AllowOverride All
 
 </Directory>
 </VirtualHost>
