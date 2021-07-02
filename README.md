@@ -68,11 +68,9 @@ Las clases de controlador contienen métodos que son las acciones. Para crear un
 
 Puede acceder a los parámetros de ruta (por ejemplo, el parámetro ** id ** que se muestra en los ejemplos de ruta anteriores) en acciones a través de la propiedad `$ this->route_params`.
 
-
 ### Action filters
 
 Los controladores pueden tener métodos de filtrado **before** y **after**. Estos son métodos que se llaman antes y después de **cada** llamada al método de acción en un controlador. Útil para la autenticación, por ejemplo, asegurarse de que un usuario haya iniciado sesión antes de permitirle ejecutar una acción. Opcionalmente, agregue un **antes del filtro** a un controlador como este:
-
 
 ```php
 /**
@@ -139,7 +137,6 @@ En este proyecto usamos Sentry.io para monitorear los errores.
 Las URL amigables se habilitan mediante reglas de reescritura del servidor web. Se incluye un archivo [.htaccess] (public/.htaccess) en la carpeta `public`. 
 
 La configuración equivalente de nginx se encuentra en el archivo [nginx-configuration.txt] (nginx-configuration.txt). 
-
 
 ---
 
