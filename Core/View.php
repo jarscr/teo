@@ -14,6 +14,9 @@ namespace Core;
  * Programador: Alfredo Rodriguez
  * 
  **/
+use Symfony\Component\Translation\Translator;
+use Symfony\Component\Translation\Loader\PhpFileLoader;
+use Symfony\Bridge\Twig\Extension\TranslationExtension;
 
 class View
 {
@@ -47,13 +50,23 @@ class View
      *
      * @return void
      */
-    public static function renderTemplate($template, $args = [])
+    public static function renderTemplate($template, $args = [],$lang)
     {
         static $twig = null;
 
         if ($twig === null) {
-            $loader = new \Twig_Loader_Filesystem(dirname(__DIR__) . '/App/Views');
-            $twig = new \Twig_Environment($loader);
+            $loader = new \Twig\Loader\FilesystemLoader(dirname(__DIR__) . '/App/Views');
+            $twig = new \Twig\Environment($loader);
+
+            $translator = new Translator($lang);
+            $translator->addLoader('php',new PhpFileLoader());
+            $translator->addResource(
+                'php',
+                '/Users/jarscr/Desarrollo/teo/App/Languages/es.php',
+                'es'
+            );
+            $twig->addExtension(new \Symfony\Bridge\Twig\Extension\TranslationExtension($translator));
+            
         }
 
         echo $twig->render($template, $args);

@@ -16,12 +16,15 @@
     ],
     "require": {
         "php": "~7.3",
-        "twig/twig": "~3.0",
-        "symfony/polyfill-mbstring": "^1.10",       
-        "psr/log": "^1.1",
-        "mpdf/mpdf": "^8.0",
         "delight-im/auth": "^8.2",
-        "symfony/yaml": "^5.1"
+        "mpdf/mpdf": "^8.0",
+        "psr/log": "^1.1",
+        "symfony/polyfill-mbstring": "^1.10",
+        "symfony/templating": "^5.3",
+        "symfony/translation": "^5.3",
+        "symfony/twig-bridge": "^5.3",
+        "symfony/yaml": "^5.1",
+        "twig/twig": "^3.3"
     },
     "require-dev": {
         "sentry/sdk": "^3.0",

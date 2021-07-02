@@ -34,19 +34,27 @@ class Config
      * Database user
      * @var string
      */
-    const DB_USER = 'teo';
+    const DB_USER = 'root';
 
     /**
      * Database password
      * @var string
      */
-    const DB_PASSWORD = 'teo';
+    const DB_PASSWORD = 'root';
 
     /**
     * Version
      * @var string
     */
     const VERSION = '1.0.2';
+
+    /**
+    * Default Lang
+     * @var string
+    */
+    const LANG = 'es_ES';
+
+
 
     /**
      * Show or hide error messages on screen

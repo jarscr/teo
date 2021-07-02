@@ -61,14 +61,7 @@ abstract class Model
     {
         static $lang = null;
         if ($lang === null) {
-        $lang = array('users'=>'Users',
-                'year'=>date('Y'),
-                'home'=>'Home',
-                'services'=>'Services',
-                'help'=>'Help',
-                'clients'=>'Clients',
-                'search'=>'Search',
-                'aboutUs'=>'About Us'
+        $lang = array('lang'=>CONFIG::LANG
             );
         }
         return $lang;

@@ -30,7 +30,7 @@ class Home extends \Core\Controller
     {
         $Users = new Users();
         $Modules =  $Users->getAllModules();
-        $allUsers = $Users->getAll()();
+        $allUsers = $Users->getAll();
         $Credits = $Users->getAllCredits();
         $Language =  $Users->getLangAll();
 
@@ -39,6 +39,6 @@ class Home extends \Core\Controller
         'users'=>$allUsers,
         'credits'=>$Credits
         );
-        View::renderTemplate('Home/index.html',$Parameters );
+        View::renderTemplate('Home/index.html',$Parameters,$Language['lang'] );
     }
 }
