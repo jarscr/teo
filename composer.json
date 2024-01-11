@@ -5,7 +5,7 @@
     "keywords": ["mvc","framework","php","costa rica","web","jarscr","teo"],
     "homepage": "https://github.com/jarscr/teo",
     "license": "MIT",
-    "version":"1.0.6",
+    "version":"1.1.1",
     "authors": [
         {
             "name": "Alfredo Rodríguez",
@@ -15,25 +15,23 @@
         }
     ],
     "require": {
-        "php": "~7.3",
-        "delight-im/auth": "^8.2",
-        "mpdf/mpdf": "^8.0",
-        "psr/log": "^1.1",
-        "symfony/polyfill-mbstring": "^1.10",
-        "symfony/templating": "^5.3",
-        "symfony/translation": "^5.3",
-        "symfony/twig-bridge": "^5.3",
-        "symfony/yaml": "^5.1",
-        "twig/twig": "^3.3"
+        "delight-im/auth": "^8.3",
+        "mpdf/mpdf": "^8.2",
+        "twig/twig": "^3.8",
+        "symfony/translation": "^7.0",
+        "symfony/twig-bridge": "^7.0"
     },
     "require-dev": {
-        "sentry/sdk": "^3.0",
-        "phpunit/phpunit": "^9.3.3"
+        "sentry/sdk": "^3.6.0",
+        "phpunit/phpunit": "^9.6.15"
     },
     "config": {
         "optimize-autoloader": true,
         "preferred-install": "dist",
-        "sort-packages": true
+        "sort-packages": true,
+        "allow-plugins": {
+            "php-http/discovery": true
+        }
     },
     "autoload": {
         "psr-4": {
@@ -43,4 +41,5 @@
     },
     "minimum-stability": "dev",
     "prefer-stable": true
+
 }
