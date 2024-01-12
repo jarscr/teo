@@ -62,10 +62,10 @@ class View
             $translator->addLoader('php',new PhpFileLoader());
             $translator->addResource(
                 'php',
-                '/Users/jarscr/Desarrollo/teo/App/Languages/es.php',
+                '../Languages/es.php',
                 'es'
             );
-            $twig->addExtension(new \Symfony\Bridge\Twig\Extension\TranslationExtension($translator));
+            $twig->addExtension(new TranslationExtension($translator));
             
         }
 

@@ -5,7 +5,7 @@ namespace App;
 /**
  * Application configuration
  *
- * Requiere PHP7.3
+ * Requiere PHP8.2
  * 
  * Desarrolla JARS Costa Rica
  * www.jarscr.com
@@ -46,13 +46,13 @@ class Config
     * Version
      * @var string
     */
-    const VERSION = '1.0.2';
+    const VERSION = '1.1.1';
 
     /**
     * Default Lang
      * @var string
     */
-    const LANG = 'es_ES';
+    const LANG = 'es';
 
 
 

@@ -8,7 +8,7 @@ use App\Models\User as Users;
 /**
  * Home controller
  *
- * Requiere PHP7.3
+ * Requiere PHP8.2
  * 
  * Desarrolla JARS Costa Rica
  * www.jarscr.com
