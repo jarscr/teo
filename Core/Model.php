@@ -1,88 +1,96 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Core;
 
-use PDO;
 use App\Config;
+use PDO;
+use PDOException;
 
 /**
  * Base model
- *
- * Requiere PHP7.3
- * 
- * Desarrolla JARS Costa Rica
- * www.jarscr.com
- * Telefono: 4000-2528
- * 
- * Programador: Alfredo Rodriguez
- * 
- **/
-
+ */
 abstract class Model
 {
-
     /**
-     * Get the PDO database connection
+     * Get the shared PDO database connection.
      *
-     * @return mixed
+     * @throws PDOException
      */
-    protected static function getDB()
+    protected static function getDB(): PDO
     {
         static $db = null;
 
         if ($db === null) {
-            $dsn = 'mysql:host=' . Config::DB_HOST . ';dbname=' . Config::DB_NAME . ';charset=utf8';
-            $db = new PDO($dsn, Config::DB_USER, Config::DB_PASSWORD);
+            $dsn = sprintf(
+                'mysql:host=%s;dbname=%s;charset=%s',
+                Config::dbHost(),
+                Config::dbName(),
+                Config::dbCharset()
+            );
 
-            // Throw an Exception when an error occurs
-            $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            $db = new PDO($dsn, Config::dbUser(), Config::dbPassword(), [
+                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+                PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+                PDO::ATTR_EMULATE_PREPARES => false,
+            ]);
         }
 
         return $db;
     }
 
-    protected static function getCredits()
+    /**
+     * @return array{year: string, version: string, name: string, development: string, description: string, keywords: string}
+     */
+    protected static function getCredits(): array
     {
-     
-        static $creditos = null;
-        if ($creditos === null) {
-        $creditos = array('year'=>date('Y'),
-                'version'=> Config::VERSION,
-                'name'=>'TEO Simple PHP Framework',
-                'development'=>'JARS Costa Rica',
-                'description' =>'TEO Simple PHP Framework for building web applications in PHP',
-                'keywords' => 'teo,framework, jarscr, php, free'
-            );
+        static $credits = null;
+
+        if ($credits === null) {
+            $credits = [
+                'year' => date('Y'),
+                'version' => Config::version(),
+                'name' => 'TEO Simple PHP Framework',
+                'development' => 'JARS Costa Rica',
+                'description' => 'TEO Simple PHP Framework for building web applications in PHP',
+                'keywords' => 'teo,framework, jarscr, php, free',
+            ];
         }
-        return $creditos;
+
+        return $credits;
     }
 
-    protected static function getLang()
+    /**
+     * @return array{lang: string}
+     */
+    protected static function getLang(): array
     {
-        static $lang = null;
-        if ($lang === null) {
-        $lang = array('lang'=>CONFIG::LANG
-            );
-        }
-        return $lang;
+        return ['lang' => Config::lang()];
     }
 
-    protected static function getModules()
-        {
-            static $modules = null;
-            if ($modules === null) {
-                $modules = array(
-                        array(
-                    'title'=>'Home',
-                    'router'=>'/',
-                    'icon'=>'house-fill'
-                    ),
-                        array(
-                    'title'=>'About Us',
-                    'router'=>'#',
-                    'icon'=>'building'
-                        ));
-                return $modules;
-            }
+    /**
+     * @return list<array{title: string, router: string, icon: string}>
+     */
+    protected static function getModules(): array
+    {
+        static $modules = null;
+
+        if ($modules === null) {
+            $modules = [
+                [
+                    'title' => 'Home',
+                    'router' => '/',
+                    'icon' => 'house-fill',
+                ],
+                [
+                    'title' => 'About Us',
+                    'router' => '#',
+                    'icon' => 'building',
+                ],
+            ];
         }
+
+        return $modules;
+    }
 }

@@ -1,37 +1,25 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Core;
 
 /**
  * Base controller
- *
- * Requiere PHP7.3
- * 
- * Desarrolla JARS Costa Rica
- * www.jarscr.com
- * Telefono: 4000-2528
- * 
- * Programador: Alfredo Rodriguez
- * 
- **/
-
+ */
 abstract class Controller
 {
-
     /**
      * Parameters from the matched route
-     * @var array
+     *
+     * @var array<string, mixed>
      */
-    protected $route_params = [];
+    protected array $route_params = [];
 
     /**
-     * Class constructor
-     *
-     * @param array $route_params  Parameters from the route
-     *
-     * @return void
+     * @param array<string, mixed> $route_params Parameters from the route
      */
-    public function __construct($route_params)
+    public function __construct(array $route_params)
     {
         $this->route_params = $route_params;
     }
@@ -42,40 +30,44 @@ abstract class Controller
      * filter methods on action methods. Action methods need to be named
      * with an "Action" suffix, e.g. indexAction, showAction etc.
      *
-     * @param string $name  Method name
-     * @param array $args Arguments passed to the method
+     * @param array<int, mixed> $args
      *
-     * @return void
+     * @throws \Exception
      */
-    public function __call($name, $args)
+    public function __call(string $name, array $args): mixed
     {
         $method = $name . 'Action';
 
-        if (method_exists($this, $method)) {
-            if ($this->before() !== false) {
-                call_user_func_array([$this, $method], $args);
-                $this->after();
-            }
-        } else {
-            throw new \Exception("Method $method not found in controller " . get_class($this));
+        if (!method_exists($this, $method)) {
+            throw new \Exception(
+                "Method $method not found in controller " . static::class,
+                404
+            );
         }
+
+        if ($this->before() === false) {
+            return null;
+        }
+
+        $result = $this->$method(...$args);
+        $this->after();
+
+        return $result;
     }
 
     /**
      * Before filter - called before an action method.
-     *
-     * @return void
+     * Return false to stop the action from executing.
      */
-    protected function before()
+    protected function before(): mixed
     {
+        return null;
     }
 
     /**
      * After filter - called after an action method.
-     *
-     * @return void
      */
-    protected function after()
+    protected function after(): void
     {
     }
 }

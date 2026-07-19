@@ -1,74 +1,128 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Core;
+
+use App\Config;
+use Symfony\Bridge\Twig\Extension\TranslationExtension;
+use Symfony\Component\Translation\Loader\PhpFileLoader;
+use Symfony\Component\Translation\Translator;
+use Twig\Environment;
+use Twig\Loader\FilesystemLoader;
 
 /**
  * View
- *
- * Requiere PHP7.3
- * 
- * Desarrolla JARS Costa Rica
- * www.jarscr.com
- * Telefono: 4000-2528
- * 
- * Programador: Alfredo Rodriguez
- * 
- **/
-use Symfony\Component\Translation\Translator;
-use Symfony\Component\Translation\Loader\PhpFileLoader;
-use Symfony\Bridge\Twig\Extension\TranslationExtension;
-
+ */
 class View
 {
-
     /**
-     * Render a view file
+     * Render a PHP view file
      *
-     * @param string $view  The view file
-     * @param array $args  Associative array of data to display in the view (optional)
+     * @param array<string, mixed> $args
      *
-     * @return void
+     * @throws \Exception
      */
-    public static function render($view, $args = [])
+    public static function render(string $view, array $args = []): void
     {
+        $file = self::resolveViewPath($view, dirname(__DIR__) . '/App/Views');
+
         extract($args, EXTR_SKIP);
 
-        $file = dirname(__DIR__) . "/App/Views/$view";  // relative to Core directory
-
-        if (is_readable($file)) {
-            require $file;
-        } else {
-            throw new \Exception("$file not found");
-        }
+        require $file;
     }
 
     /**
      * Render a view template using Twig
      *
-     * @param string $template  The template file
-     * @param array $args  Associative array of data to display in the view (optional)
+     * @param array<string, mixed> $args
      *
-     * @return void
+     * @throws \Exception
      */
-    public static function renderTemplate($template, $args = [],$lang)
+    public static function renderTemplate(string $template, array $args = [], ?string $lang = null): void
     {
-        static $twig = null;
+        $template = str_replace(['\\', "\0"], ['/', ''], $template);
+        $template = ltrim($template, '/');
 
-        if ($twig === null) {
-            $loader = new \Twig\Loader\FilesystemLoader(dirname(__DIR__) . '/App/Views');
-            $twig = new \Twig\Environment($loader);
-
-            $translator = new Translator($lang);
-            $translator->addLoader('php',new PhpFileLoader());
-            $translator->addResource(
-                'php',
-                '../Languages/es.php',
-                'es'
-            );
-            $twig->addExtension(new TranslationExtension($translator));
-            
+        if ($template === '' || str_contains($template, '..')) {
+            throw new \Exception('Invalid template path');
         }
 
+        $lang ??= Config::lang();
+        $twig = self::getTwig($lang);
+
         echo $twig->render($template, $args);
+    }
+
+    private static function getTwig(string $lang): Environment
+    {
+        static $twig = null;
+        static $currentLang = null;
+
+        if ($twig !== null && $currentLang === $lang) {
+            return $twig;
+        }
+
+        $viewsPath = dirname(__DIR__) . '/App/Views';
+        $loader = new FilesystemLoader($viewsPath);
+
+        $twig = new Environment($loader, [
+            'debug' => Config::showErrors(),
+            'autoescape' => 'html',
+            'strict_variables' => Config::showErrors(),
+        ]);
+
+        $translator = new Translator($lang);
+        $translator->addLoader('php', new PhpFileLoader());
+
+        $languagesPath = dirname(__DIR__) . '/App/Languages';
+
+        foreach (['es', 'en'] as $locale) {
+            $file = $languagesPath . '/' . $locale . '.php';
+
+            if (is_readable($file)) {
+                $translator->addResource('php', $file, $locale);
+            }
+        }
+
+        $twig->addExtension(new TranslationExtension($translator));
+
+        $currentLang = $lang;
+
+        return $twig;
+    }
+
+    /**
+     * Resolve a view path and reject directory traversal.
+     *
+     * @throws \Exception
+     */
+    private static function resolveViewPath(string $view, string $basePath): string
+    {
+        $view = str_replace(['\\', "\0"], ['/', ''], $view);
+        $view = ltrim($view, '/');
+
+        if ($view === '' || str_contains($view, '..')) {
+            throw new \Exception('Invalid view path');
+        }
+
+        $baseReal = realpath($basePath);
+
+        if ($baseReal === false) {
+            throw new \Exception('Views directory not found');
+        }
+
+        $file = $baseReal . DIRECTORY_SEPARATOR . str_replace('/', DIRECTORY_SEPARATOR, $view);
+        $realFile = realpath($file);
+
+        if ($realFile === false || !str_starts_with($realFile, $baseReal . DIRECTORY_SEPARATOR)) {
+            throw new \Exception("$view not found");
+        }
+
+        if (!is_readable($realFile)) {
+            throw new \Exception("$view not found");
+        }
+
+        return $realFile;
     }
 }

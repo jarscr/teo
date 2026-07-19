@@ -1,13 +1,23 @@
-# nginx configuration to remove the question mark from the URL but maintain the query string
+# Point the server root to the /public directory.
+# Example:
+#   root /var/www/teo/public;
 
-location / { 
-    if (!-f $request_filename){
-        set $rule_0 1$rule_0;
-    }   
-    if (!-d $request_filename){
-        set $rule_0 2$rule_0;
-    }
-    if ($rule_0 = "21"){
+# Deny hidden files
+location ~ /\. {
+    deny all;
+    access_log off;
+    log_not_found off;
+}
+
+# Front controller compatible with Apache QUERY_STRING routing
+location / {
+    if (!-e $request_filename) {
         rewrite ^/(.*)$ /index.php?$1 last;
-    }   
+    }
+}
+
+location = /index.php {
+    include fastcgi_params;
+    fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+    fastcgi_pass unix:/run/php/php8.3-fpm.sock; # adjust to your FPM socket
 }

@@ -1,148 +1,180 @@
 <p align="center"><a href="https://jarscr.com" target="_blank"><img src="https://raw.githubusercontent.com/jarscr/teo/master/public/static/img/logos/logo-teo.png" width="192"></a></p>
 
-
 <p align="center">
-<a href="https://packagist.org/packages/jarscr/teo"><img src="https://img.shields.io/badge/PHP-^8.2-brightgreen.svg" alt="PHP Version">
+<a href="https://packagist.org/packages/jarscr/teo"><img src="https://img.shields.io/badge/PHP-^8.3-brightgreen.svg" alt="PHP Version"></a>
 <a href="https://packagist.org/packages/jarscr/teo"><img src="https://img.shields.io/packagist/dt/jarscr/teo" alt="Total Downloads"></a>
 <a href="https://packagist.org/packages/jarscr/teo"><img src="https://img.shields.io/packagist/v/jarscr/teo" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/jarscr/teo"><img src="https://api.travis-ci.com/jarscr/teo.svg" alt="Build Status">
+<a href="https://packagist.org/packages/jarscr/teo"><img src="https://api.travis-ci.com/jarscr/teo.svg" alt="Build Status"></a>
 <a href="https://packagist.org/packages/jarscr/teo"><img src="https://img.shields.io/packagist/l/jarscr/teo" alt="License"></a>
 </p>
 
 # Acerca de TEO Simple PHP Framework
 
-TEO es un Framework en PHP para construir aplicaciones Web y Sitios Web. Es gratis y [open-source](LICENSE). 
+TEO es un framework PHP para construir aplicaciones y sitios web. Es gratis y [open-source](LICENSE).
 
-Este proyecto esta basado en MVC <a href="https://github.com/daveh/php-mvc">daveh/php-mvc</a>
+Basado en MVC ([daveh/php-mvc](https://github.com/daveh/php-mvc)).
+
+**Requisitos:** PHP **8.3** o **8.4**, Composer, MySQL/MariaDB (opcional según tu app).
 
 ## Iniciar usando el framework
 
-1. Primero, instale el proyecto con **composer create-project jarscr/teo app-ejemplo**.
-1. Ejecuta **composer update** para instalar las dependecias.
-1. Configure el servidor web para que apunte a la carpeta **public** como web root.
-1. Abra [App/Config.php](App/Config.php) y ingrese los datos de conexión con la base de datos.
-1. Crea rutas, agrega controladores, vistas y modelos.
+1. Instala el proyecto: `composer create-project jarscr/teo app-ejemplo`
+2. Entra al directorio e instala dependencias si hace falta: `composer install`
+3. Copia la configuración de entorno:
 
-Revisa las instrucciones para que puedas usar este framework.
+   ```bash
+   cp .env.example .env
+   ```
+
+4. Edita `.env` con tus datos de base de datos e idioma.
+5. Importa el esquema si lo necesitas: `mysql -u root -p < teo.sql`
+6. Configura el servidor web para que el **document root** sea la carpeta `public/`.
+7. Crea rutas, controladores, vistas y modelos.
+
+> **Importante:** no subas el archivo `.env` a Git. Contiene secretos (credenciales, flags de depuración).
 
 ## Configuración
 
-Configuration settings are stored in the [App/Config.php](App/Config.php) class. Default settings include database connection data and a setting to show or hide error detail. You can access the settings in your code like this: `Config::DB_HOST`. You can add your own configuration settings in here.
+La configuración se carga desde variables de entorno (archivo [`.env`](.env.example) o el entorno del servidor). La clase [App/Config.php](App/Config.php) las lee de forma segura.
+
+Variables principales:
+
+| Variable       | Descripción                                      | Ejemplo        |
+|----------------|--------------------------------------------------|----------------|
+| `APP_ENV`      | Entorno (`local`, `production`, …)               | `local`        |
+| `APP_DEBUG`    | Mostrar errores detallados (`true` / `false`)    | `false`        |
+| `APP_LANG`     | Idioma por defecto                               | `es`           |
+| `APP_VERSION`  | Versión de la aplicación                         | `1.1.1`        |
+| `DB_HOST`      | Host de MySQL                                    | `127.0.0.1`    |
+| `DB_NAME`      | Nombre de la base de datos                       | `teo`          |
+| `DB_USER`      | Usuario                                          | `teo`          |
+| `DB_PASSWORD`  | Contraseña                                       | `change-me`    |
+| `DB_CHARSET`   | Charset PDO                                      | `utf8mb4`      |
+
+Uso en código:
+
+```php
+use App\Config;
+
+$host = Config::dbHost();
+$debug = Config::showErrors();
+$lang = Config::lang();
+```
+
+En producción deja `APP_DEBUG=false`. Los errores se registran en `logs/` y se muestran plantillas genéricas 404/500.
 
 ## Rutas
 
-Las [Rutas](Core/Router.php) traduce las URL en controladores y acciones. Las rutas se agregan en el [controlador] (public/index.php). Se incluye una ruta de inicio de muestra que se enruta a la acción `index` en el [controlador de home](App/Controllers/Home.php).
-
-Las rutas se agregan con el método `add`. Puede agregar rutas URL fijas y especificar el controlador y la acción, así:
+Las [rutas](Core/Router.php) traducen URLs en controladores y acciones. Se definen en el [front controller](public/index.php).
 
 ```php
 $router->add('', ['controller' => 'Home', 'action' => 'index']);
 $router->add('posts/index', ['controller' => 'Posts', 'action' => 'index']);
-```
-
-O puede agregar **variables** de ruta, así:
-
-```php
 $router->add('{controller}/{action}');
-```
-
-Además de **controller** y **action**, puede especificar cualquier parámetro que desee entre llaves y también especificar una expresión regular personalizada para ese parámetro:
-
-```php
 $router->add('{controller}/{id:\d+}/{action}');
-```
-
-También puede especificar un espacio de nombres para el controlador:
-
-```php
 $router->add('admin/{controller}/{action}', ['namespace' => 'Admin']);
 ```
 
+El router valida nombres de controlador/acción/namespace y solo permite invocar métodos `*Action` a través de los filtros del controlador (no se pueden llamar métodos arbitrarios).
+
 ## Controladores
 
-Los controladores responden a las acciones del usuario (hacer clic en un enlace, enviar un formulario, etc.). Los controladores son clases que amplían la clase [Core\Controller] (Core/Controller.php).
+Los controladores viven en `App/Controllers`, extienden [Core\Controller](Core/Controller.php) y usan el namespace `App\Controllers`.
 
-Los controladores se almacenan en la carpeta `App/Controllers`. Se incluye una muestra de [Home controller] (App/Controllers/Home.php). Las clases de controlador deben estar en el espacio de nombres `App/Controllers`. Puede agregar sub directorios para organizar sus controladores, por lo que al agregar una ruta para estos controladores, debe especificar el espacio de nombres (consulte la sección de enrutamiento anterior).
+Las acciones llevan el sufijo `Action` (por ejemplo `indexAction`). Los parámetros de ruta están en `$this->route_params`.
 
-Las clases de controlador contienen métodos que son las acciones. Para crear una acción, agregue el sufijo ** `Action` ** al nombre del método. El controlador de muestra en [App/Controllers/Home.php] (App/Controllers/Home.php) tiene una acción "index" de muestra.
-
-Puede acceder a los parámetros de ruta (por ejemplo, el parámetro ** id ** que se muestra en los ejemplos de ruta anteriores) en acciones a través de la propiedad `$ this->route_params`.
-
-### Action filters
-
-Los controladores pueden tener métodos de filtrado **before** y **after**. Estos son métodos que se llaman antes y después de **cada** llamada al método de acción en un controlador. Útil para la autenticación, por ejemplo, asegurarse de que un usuario haya iniciado sesión antes de permitirle ejecutar una acción. Opcionalmente, agregue un **antes del filtro** a un controlador como este:
+### Filtros before / after
 
 ```php
-/**
- * Before filter. Return false to stop the action from executing.
- *
- * @return void
- */
-protected function before()
+protected function before(): mixed
 {
+    // return false para cancelar la acción
+    return null;
 }
-```
-Para detener la ejecución de la acción llamada originalmente, devuelve `false` del método de filtro anterior. Se agrega un **filtro posterior** así:
 
-```php
-/**
- * After filter.
- *
- * @return void
- */
-protected function after()
+protected function after(): void
 {
 }
 ```
 
 ## Vistas
-Las vistas se utilizan para mostrar información (normalmente HTML). Los archivos de visualización van en la carpeta `App/Views`. Las vistas pueden estar en uno de dos formatos: PHP estándar, pero con PHP suficiente para mostrar los datos. Ningún acceso a la base de datos ni nada parecido debería ocurrir en un archivo de vista. Puede representar una vista PHP estándar en un controlador, opcionalmente pasando variables, como esta:
 
+Las vistas están en `App/Views`. Dos formatos:
+
+**PHP:**
 
 ```php
 View::render('Home/index.php', [
-    'name'    => 'Dave',
-    'colours' => ['red', 'green', 'blue']
+    'name' => 'Dave',
+    'colours' => ['red', 'green', 'blue'],
 ]);
 ```
-El segundo formato utiliza el motor de plantillas [Twig] (http://twig.sensiolabs.org/). El uso de Twig le permite tener plantillas más simples y seguras que pueden aprovechar cosas como [herencia de plantillas] (http://twig.sensiolabs.org/doc/templates.html#template-inheritance). Puede renderizar una plantilla Twig como esta:
 
+**Twig** (recomendado; autoescape HTML activo):
 
 ```php
 View::renderTemplate('Home/index.html', [
-    'name'    => 'Dave',
-    'colours' => ['red', 'green', 'blue']
-]);
+    'name' => 'Dave',
+    'colours' => ['red', 'green', 'blue'],
+], 'es');
 ```
-Se incluye una plantilla de muestra de Twig en [App/Views/Home/index.html](App/Views/Home/index.html) que hereda de la plantilla base en [App/Views/base.html](App/Views/base.html).
 
+Traducciones vía Symfony Translation + Twig Bridge; archivos en `App/Languages/` (`es.php`, `en.php`).
+
+Plantilla de ejemplo: [App/Views/Home/index.html](App/Views/Home/index.html) (hereda de [base.html](App/Views/base.html)).
+
+Las rutas de vista/plantilla rechazan path traversal (`..`).
 
 ## Modelos
 
-Los modelos se utilizan para obtener y almacenar datos en su aplicación. No saben nada sobre cómo se presentarán estos datos en las vistas. Los modelos extienden la clase `Core\Model` y usan [PDO] (http://php.net/manual/en/book.pdo.php) para acceder a la base de datos. Están almacenados en la carpeta `App/Models`. Se incluye una clase de modelo de usuario de muestra en [App/Models/User.php](App/Models/User.php). Puede obtener la instancia de conexión de la base de datos PDO de esta manera:
+Los modelos extienden [Core\Model](Core/Model.php) y usan PDO con:
 
+- charset `utf8mb4`
+- `PDO::ERRMODE_EXCEPTION`
+- `PDO::ATTR_EMULATE_PREPARES = false`
+- fetch asociativo por defecto
 
 ```php
 $db = static::getDB();
+$stmt = $db->prepare('SELECT id, username FROM users WHERE id = ?');
+$stmt->execute([$id]);
+$user = $stmt->fetch();
 ```
+
+Ejemplo: [App/Models/User.php](App/Models/User.php). El esquema (tablas de `delight-im/auth`) está en [teo.sql](teo.sql) con motor **InnoDB**.
 
 ## Errores
 
-Si la configuración de `SHOW_ERRORS` se establece en `true`, el navegador mostrará todos los detalles del error si se produce un error o una excepción. Si se establece en `false`", se mostrará un mensaje genérico mediante [App/Views/404.html](App/Views/404.html) o [App/Views/500.html](App/Views/500.html) vistas, según el error.
+Con `APP_DEBUG=true` se muestran detalles escapados en el navegador. Con `false`, se escribe en `logs/YYYY-MM-DD.txt` y se renderizan [404.html](App/Views/404.html) / [500.html](App/Views/500.html).
 
-En este proyecto usamos Sentry.io para monitorear los errores.
+Opcionalmente puedes integrar [Sentry](https://sentry.io) (`sentry/sentry` en `require-dev`).
+
+## Seguridad (resumen)
+
+- Credenciales solo en `.env` / entorno del servidor
+- Cabeceras HTTP básicas (`X-Content-Type-Options`, `X-Frame-Options`, CSP, etc.)
+- Bloqueo de acceso a `.env`, `App/`, `Core/`, `vendor/`, `logs/` desde Apache (`.htaccess`)
+- Acciones del router acotadas a `*Action` + filtros
+- Twig con autoescape; salida de errores sanitizada
+
+## Pruebas
+
+```bash
+composer test
+# o
+vendor/bin/phpunit --configuration phpunit.xml.dist
+```
 
 ## Configuración del servidor web
 
-Las URL amigables se habilitan mediante reglas de reescritura del servidor web. Se incluye un archivo [.htaccess] (public/.htaccess) en la carpeta `public`. 
-
-La configuración equivalente de nginx se encuentra en el archivo [nginx-configuration.txt] (nginx-configuration.txt). 
+- **Apache:** [public/.htaccess](public/.htaccess) (y [.htaccess](.htaccess) en la raíz si el vhost apunta al proyecto)
+- **nginx:** [nginx-configuration.txt](nginx-configuration.txt) — el root debe ser `public/`
 
 ---
 
 ## Licencia
 
-Teo PHP MVC es un software open-sourced licenciado bajo [MIT license](https://opensource.org/licenses/MIT).
+Teo PHP MVC es software open-source bajo [licencia MIT](https://opensource.org/licenses/MIT).
 
 ## Desarrolla
 

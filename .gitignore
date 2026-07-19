@@ -1,2 +1,7 @@
 .DS_Store
-vendor
+.env
+.env.local
+vendor/
+logs/*.txt
+.phpunit.result.cache
+.phpunit.cache/

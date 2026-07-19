@@ -2,29 +2,28 @@
     "name": "jarscr/teo",
     "type": "project",
     "description": "TEO Simple PHP Framework for building web applications in PHP",
-    "keywords": ["mvc","framework","php","costa rica","web","jarscr","teo"],
+    "keywords": ["mvc", "framework", "php", "costa rica", "web", "jarscr", "teo"],
     "homepage": "https://github.com/jarscr/teo",
     "license": "MIT",
-    "version":"1.0.7",
     "authors": [
         {
             "name": "Alfredo Rodríguez",
             "email": "jarscr@gmail.com",
-            "homepage": "http://www.jarscr.com",
+            "homepage": "https://www.jarscr.com",
             "role": "Developer"
         }
     ],
     "require": {
-        "php": "~8.1",
+        "php": "^8.3",
         "delight-im/auth": "^8.3",
         "mpdf/mpdf": "^8.2",
-        "twig/twig": "^3.8",
-        "symfony/translation": "^7.0",
-        "symfony/twig-bridge": "^7.0"
+        "twig/twig": "^3.14",
+        "symfony/translation": "^7.2",
+        "symfony/twig-bridge": "^7.2"
     },
     "require-dev": {
-        "sentry/sdk": "^3.6.0",
-        "phpunit/phpunit": "^9.6.15"
+        "phpunit/phpunit": "^11.5",
+        "sentry/sentry": "^4.10"
     },
     "config": {
         "optimize-autoloader": true,
@@ -36,11 +35,18 @@
     },
     "autoload": {
         "psr-4": {
-             "Core\\": "Core/",
-             "App\\": "App/"
+            "Core\\": "Core/",
+            "App\\": "App/"
         }
     },
-    "minimum-stability": "dev",
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+        "test": "phpunit"
+    },
+    "minimum-stability": "stable",
     "prefer-stable": true
-
 }

@@ -1,53 +1,57 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Core;
 
 /**
  * Router
- *
- * Requiere PHP7.3
- * 
- * Desarrolla JARS Costa Rica
- * www.jarscr.com
- * Telefono: 4000-2528
- * 
- * Programador: Alfredo Rodriguez
- * 
- **/
-
+ */
 class Router
 {
-
     /**
      * Associative array of routes (the routing table)
-     * @var array
+     *
+     * @var array<string, array<string, mixed>>
      */
-    protected $routes = [];
+    protected array $routes = [];
 
     /**
      * Parameters from the matched route
-     * @var array
+     *
+     * @var array<string, mixed>
      */
-    protected $params = [];
+    protected array $params = [];
 
     /**
      * Add a route to the routing table
      *
-     * @param string $route  The route URL
-     * @param array  $params Parameters (controller, action, etc.)
-     *
-     * @return void
+     * @param array<string, mixed> $params Parameters (controller, action, etc.)
      */
-    public function add($route, $params = [])
+    public function add(string $route, array $params = []): void
     {
         // Convert the route to a regular expression: escape forward slashes
-        $route = preg_replace('/\//', '\\/', $route);
+        $route = preg_replace('/\//', '\\/', $route) ?? $route;
 
         // Convert variables e.g. {controller}
-        $route = preg_replace('/\{([a-z]+)\}/', '(?P<\1>[a-z-]+)', $route);
+        $route = preg_replace('/\{([a-z]+)\}/', '(?P<\1>[a-z-]+)', $route) ?? $route;
 
         // Convert variables with custom regular expressions e.g. {id:\d+}
-        $route = preg_replace('/\{([a-z]+):([^\}]+)\}/', '(?P<\1>\2)', $route);
+        // Only allow safe characters in custom patterns to reduce ReDoS / injection risk
+        $route = preg_replace_callback(
+            '/\{([a-z]+):([^\}]+)\}/',
+            static function (array $matches): string {
+                $name = $matches[1];
+                $pattern = $matches[2];
+
+                if (preg_match('/^[a-zA-Z0-9\_\|\^\-\$\.\+\*\(\)\[\]\\\\]+$/', $pattern) !== 1) {
+                    throw new \InvalidArgumentException("Unsafe route pattern for parameter {{$name}}");
+                }
+
+                return '(?P<' . $name . '>' . $pattern . ')';
+            },
+            $route
+        ) ?? $route;
 
         // Add start and end delimiters, and case insensitive flag
         $route = '/^' . $route . '$/i';
@@ -56,28 +60,20 @@ class Router
     }
 
     /**
-     * Get all the routes from the routing table
-     *
-     * @return array
+     * @return array<string, array<string, mixed>>
      */
-    public function getRoutes()
+    public function getRoutes(): array
     {
         return $this->routes;
     }
 
     /**
-     * Match the route to the routes in the routing table, setting the $params
-     * property if a route is found.
-     *
-     * @param string $url The route URL
-     *
-     * @return boolean  true if a match found, false otherwise
+     * Match the route to the routes in the routing table
      */
-    public function match($url)
+    public function match(string $url): bool
     {
         foreach ($this->routes as $route => $params) {
-            if (preg_match($route, $url, $matches)) {
-                // Get named capture group values
+            if (preg_match($route, $url, $matches) === 1) {
                 foreach ($matches as $key => $match) {
                     if (is_string($key)) {
                         $params[$key] = $match;
@@ -93,128 +89,131 @@ class Router
     }
 
     /**
-     * Get the currently matched parameters
-     *
-     * @return array
+     * @return array<string, mixed>
      */
-    public function getParams()
+    public function getParams(): array
     {
         return $this->params;
     }
 
     /**
-     * Dispatch the route, creating the controller object and running the
-     * action method
+     * Dispatch the route, creating the controller object and running the action
      *
-     * @param string $url The route URL
-     *
-     * @return void
+     * @throws \Exception
      */
-    public function dispatch($url)
+    public function dispatch(string $url): void
     {
         $url = $this->removeQueryStringVariables($url);
 
-        if ($this->match($url)) {
-            $controller = $this->params['controller'];
-            $controller = $this->convertToStudlyCaps($controller);
-            $controller = $this->getNamespace() . $controller;
-
-            if (class_exists($controller)) {
-                $controller_object = new $controller($this->params);
-
-                $action = $this->params['action'];
-                $action = $this->convertToCamelCase($action);
-
-                if (preg_match('/action$/i', $action) == 0) {
-                    $controller_object->$action();
-
-                } else {
-                    throw new \Exception("Method $action in controller $controller cannot be called directly - remove the Action suffix to call this method");
-                }
-            } else {
-                throw new \Exception("Controller class $controller not found");
-            }
-        } else {
+        if (!$this->match($url)) {
             throw new \Exception('No route matched.', 404);
         }
+
+        $controller = $this->params['controller'] ?? null;
+        $action = $this->params['action'] ?? null;
+
+        if (!is_string($controller) || !is_string($action)) {
+            throw new \Exception('Route must define controller and action.', 404);
+        }
+
+        if (preg_match('/^[a-z]+(?:-[a-z]+)*$/i', $controller) !== 1) {
+            throw new \Exception('Invalid controller name.', 404);
+        }
+
+        if (preg_match('/^[a-z]+(?:-[a-z]+)*$/i', $action) !== 1) {
+            throw new \Exception('Invalid action name.', 404);
+        }
+
+        $controller = $this->convertToStudlyCaps($controller);
+        $controller = $this->getNamespace() . $controller;
+
+        if (!class_exists($controller)) {
+            throw new \Exception("Controller class $controller not found", 404);
+        }
+
+        $controllerObject = new $controller($this->params);
+
+        if (!$controllerObject instanceof Controller) {
+            throw new \Exception("Controller class $controller must extend Core\\Controller");
+        }
+
+        $action = $this->convertToCamelCase($action);
+
+        // Prevent calling *Action methods directly; only allow the short name
+        // so filters run through Controller::__call
+        if (preg_match('/action$/i', $action) === 1) {
+            throw new \Exception(
+                "Method $action in controller $controller cannot be called directly - remove the Action suffix to call this method"
+            );
+        }
+
+        $method = $action . 'Action';
+        $reflectionClass = new \ReflectionClass($controllerObject);
+
+        // Force the __call filter path: the short name must not exist as a real method
+        if ($reflectionClass->hasMethod($action)) {
+            throw new \Exception(
+                "Define actions as {$method}(); method {$action}() must not exist on $controller"
+            );
+        }
+
+        if (!$reflectionClass->hasMethod($method)) {
+            throw new \Exception("Method $method not found in controller $controller", 404);
+        }
+
+        $reflection = $reflectionClass->getMethod($method);
+
+        if ($reflection->isPrivate() || $reflection->isStatic()) {
+            throw new \Exception("Method $method is not accessible in controller $controller", 404);
+        }
+
+        // Invoke via short name so Controller::__call applies before/after filters
+        $controllerObject->$action();
     }
 
-    /**
-     * Convert the string with hyphens to StudlyCaps,
-     * e.g. post-authors => PostAuthors
-     *
-     * @param string $string The string to convert
-     *
-     * @return string
-     */
-    protected function convertToStudlyCaps($string)
+    protected function convertToStudlyCaps(string $string): string
     {
         return str_replace(' ', '', ucwords(str_replace('-', ' ', $string)));
     }
 
-    /**
-     * Convert the string with hyphens to camelCase,
-     * e.g. add-new => addNew
-     *
-     * @param string $string The string to convert
-     *
-     * @return string
-     */
-    protected function convertToCamelCase($string)
+    protected function convertToCamelCase(string $string): string
     {
         return lcfirst($this->convertToStudlyCaps($string));
     }
 
     /**
-     * Remove the query string variables from the URL (if any). As the full
-     * query string is used for the route, any variables at the end will need
-     * to be removed before the route is matched to the routing table. For
-     * example:
-     *
-     *   URL                           $_SERVER['QUERY_STRING']  Route
-     *   -------------------------------------------------------------------
-     *   localhost                     ''                        ''
-     *   localhost/?                   ''                        ''
-     *   localhost/?page=1             page=1                    ''
-     *   localhost/posts?page=1        posts&page=1              posts
-     *   localhost/posts/index         posts/index               posts/index
-     *   localhost/posts/index?page=1  posts/index&page=1        posts/index
-     *
-     * A URL of the format localhost/?page (one variable name, no value) won't
-     * work however. (NB. The .htaccess file converts the first ? to a & when
-     * it's passed through to the $_SERVER variable).
-     *
-     * @param string $url The full URL
-     *
-     * @return string The URL with the query string variables removed
+     * Remove the query string variables from the URL (if any).
      */
-    protected function removeQueryStringVariables($url)
+    protected function removeQueryStringVariables(string $url): string
     {
-        if ($url != '') {
-            $parts = explode('&', $url, 2);
-
-            if (strpos($parts[0], '=') === false) {
-                $url = $parts[0];
-            } else {
-                $url = '';
-            }
+        if ($url === '') {
+            return $url;
         }
 
-        return $url;
+        $parts = explode('&', $url, 2);
+
+        if (!str_contains($parts[0], '=')) {
+            return $parts[0];
+        }
+
+        return '';
     }
 
     /**
-     * Get the namespace for the controller class. The namespace defined in the
-     * route parameters is added if present.
-     *
-     * @return string The request URL
+     * Get the namespace for the controller class.
      */
-    protected function getNamespace()
+    protected function getNamespace(): string
     {
-        $namespace = 'App\Controllers\\';
+        $namespace = 'App\\Controllers\\';
 
         if (array_key_exists('namespace', $this->params)) {
-            $namespace .= $this->params['namespace'] . '\\';
+            $ns = $this->params['namespace'];
+
+            if (!is_string($ns) || preg_match('/^[A-Za-z][A-Za-z0-9]*(?:\\\\[A-Za-z][A-Za-z0-9]*)*$/', $ns) !== 1) {
+                throw new \Exception('Invalid controller namespace.', 404);
+            }
+
+            $namespace .= $ns . '\\';
         }
 
         return $namespace;

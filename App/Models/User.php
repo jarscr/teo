@@ -1,56 +1,58 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
-use PDO;
+use Core\Model;
 
 /**
  * Example user model
- *
- * Requiere PHP8.2
- * 
- * Desarrolla JARS Costa Rica
- * www.jarscr.com
- * Telefono: 4000-2528
- * 
- * Programador: Alfredo Rodriguez
- * 
- **/
-
-class User extends \Core\Model
+ */
+class User extends Model
 {
+    /**
+     * Get all users as an associative array.
+     *
+     * @return list<array<string, mixed>>
+     */
+    public static function getAll(): array
+    {
+        // Demo data when the database is not available (e.g. CI without DB).
+        // Prefer prepared statements when querying:
+        // $db = static::getDB();
+        // $stmt = $db->query('SELECT id AS user_id, username FROM users');
+        // return $stmt->fetchAll();
+
+        return [
+            [
+                'user_id' => 1,
+                'username' => 'Demo',
+            ],
+        ];
+    }
 
     /**
-     * Get all the users as an associative array
-     *
-     * @return array
+     * @return array{lang: string}
      */
-    public static function getAll()
+    public static function getLangAll(): array
     {
-        // Se comenta para que Travis Compile sin DB
-        //$db = static::getDB();
-        //$stmt = $db->query('SELECT user_id, username FROM users');
-        //return $stmt->fetchAll(PDO::FETCH_ASSOC);
-        return array('Usuario'=>'Demo','Email'=>'demo@example.com');
+        return static::getLang();
     }
 
-    public static function getLangAll()
+    /**
+     * @return list<array{title: string, router: string, icon: string}>
+     */
+    public static function getAllModules(): array
     {
-        $lang = static::getLang();
-        return $lang;
+        return static::getModules();
     }
 
-   
-    public static function getAllModules()
+    /**
+     * @return array{year: string, version: string, name: string, development: string, description: string, keywords: string}
+     */
+    public static function getAllCredits(): array
     {
-        $modules = static::getModules();
-        return $modules;
-    }
-
-
-    public static function getAllCredits()
-    {
-        $credits = static::getCredits();
-        return $credits;
+        return static::getCredits();
     }
 }

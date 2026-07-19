@@ -1,8 +1,23 @@
 # Disable server signature
 ServerSignature Off
+ServerTokens Prod
+
+# Deny access to sensitive files if document root is misconfigured
+<FilesMatch "^\.env">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order allow,deny
+        Deny from all
+    </IfModule>
+</FilesMatch>
 
 <IfModule mod_rewrite.c>
     RewriteEngine on
-    RewriteRule  ^$ public/    [L]
-    RewriteRule  (.*) public/$1 [L]
+    RewriteRule ^\.env - [F,L]
+    RewriteRule ^(App|Core|vendor|logs|tests)(/|$) - [F,L]
+    RewriteRule ^composer\.(json|lock)$ - [F,L]
+    RewriteRule ^$ public/ [L]
+    RewriteRule (.*) public/$1 [L]
 </IfModule>

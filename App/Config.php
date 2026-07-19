@@ -1,64 +1,145 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App;
 
 /**
- * Application configuration
+ * Application configuration loaded from environment variables.
  *
- * Requiere PHP8.2
- * 
- * Desarrolla JARS Costa Rica
- * www.jarscr.com
- * Telefono: 4000-2528
- * 
- * Programador: Alfredo Rodriguez
- * 
- **/
-
+ * Copy .env.example to .env and set your values. Real server environment
+ * variables take precedence over the .env file.
+ */
 class Config
 {
+    private static bool $loaded = false;
 
     /**
-     * Database host
-     * @var string
+     * Load .env into the process environment once.
      */
-    const DB_HOST = 'localhost';
+    public static function load(): void
+    {
+        if (self::$loaded) {
+            return;
+        }
 
-    /**
-     * Database name
-     * @var string
-     */
-    const DB_NAME = 'teo';
+        $envFile = dirname(__DIR__) . '/.env';
 
-    /**
-     * Database user
-     * @var string
-     */
-    const DB_USER = 'root';
+        if (is_readable($envFile)) {
+            self::parseEnvFile($envFile);
+        }
 
-    /**
-     * Database password
-     * @var string
-     */
-    const DB_PASSWORD = 'root';
+        self::$loaded = true;
+    }
 
-    /**
-    * Version
-     * @var string
-    */
-    const VERSION = '1.1.1';
+    public static function env(string $key, ?string $default = null): ?string
+    {
+        self::load();
 
-    /**
-    * Default Lang
-     * @var string
-    */
-    const LANG = 'es';
+        $value = $_ENV[$key] ?? $_SERVER[$key] ?? getenv($key);
 
+        if ($value === false || $value === null || $value === '') {
+            return $default;
+        }
 
+        return (string) $value;
+    }
 
-    /**
-     * Show or hide error messages on screen
-     * @var boolean
-     */
-    const SHOW_ERRORS = true;
+    public static function bool(string $key, bool $default = false): bool
+    {
+        $value = self::env($key);
+
+        if ($value === null) {
+            return $default;
+        }
+
+        return filter_var($value, FILTER_VALIDATE_BOOLEAN);
+    }
+
+    public static function dbHost(): string
+    {
+        return self::env('DB_HOST', '127.0.0.1') ?? '127.0.0.1';
+    }
+
+    public static function dbName(): string
+    {
+        return self::env('DB_NAME', 'teo') ?? 'teo';
+    }
+
+    public static function dbUser(): string
+    {
+        return self::env('DB_USER', 'teo') ?? 'teo';
+    }
+
+    public static function dbPassword(): string
+    {
+        return self::env('DB_PASSWORD', '') ?? '';
+    }
+
+    public static function dbCharset(): string
+    {
+        return self::env('DB_CHARSET', 'utf8mb4') ?? 'utf8mb4';
+    }
+
+    public static function version(): string
+    {
+        return self::env('APP_VERSION', '1.1.1') ?? '1.1.1';
+    }
+
+    public static function lang(): string
+    {
+        $lang = self::env('APP_LANG', 'es') ?? 'es';
+
+        return preg_match('/^[a-z]{2}(?:_[A-Z]{2})?$/', $lang) === 1 ? $lang : 'es';
+    }
+
+    public static function showErrors(): bool
+    {
+        return self::bool('APP_DEBUG', false);
+    }
+
+    private static function parseEnvFile(string $path): void
+    {
+        $lines = file($path, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+
+        if ($lines === false) {
+            return;
+        }
+
+        foreach ($lines as $line) {
+            $line = trim($line);
+
+            if ($line === '' || str_starts_with($line, '#')) {
+                continue;
+            }
+
+            if (!str_contains($line, '=')) {
+                continue;
+            }
+
+            [$name, $value] = explode('=', $line, 2);
+            $name = trim($name);
+            $value = trim($value);
+
+            if ($name === '' || !preg_match('/^[A-Z_][A-Z0-9_]*$/', $name)) {
+                continue;
+            }
+
+            // Do not override real environment variables
+            if (array_key_exists($name, $_ENV) || getenv($name) !== false) {
+                continue;
+            }
+
+            if (
+                (str_starts_with($value, '"') && str_ends_with($value, '"'))
+                || (str_starts_with($value, "'") && str_ends_with($value, "'"))
+            ) {
+                $value = substr($value, 1, -1);
+            }
+
+            $_ENV[$name] = $value;
+            $_SERVER[$name] = $value;
+            putenv("$name=$value");
+        }
+    }
 }

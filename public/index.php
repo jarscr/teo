@@ -1,42 +1,52 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * Front controller
  *
- * Requiere PHP8.2
- * 
+ * Requires PHP 8.3+
+ *
  * Desarrolla JARS Costa Rica
- * www.jarscr.com
- * Telefono: 4000-2528
- * 
- * Programador: Alfredo Rodriguez
- * 
- **/
-
-
-/**
- * Composer
+ * https://www.jarscr.com
  */
+
+use App\Config;
+use Core\Error;
+use Core\Router;
+
 require dirname(__DIR__) . '/vendor/autoload.php';
 
+Config::load();
 
 /**
  * Error and Exception handling
  */
 error_reporting(E_ALL);
-set_error_handler('Core\Error::errorHandler');
-set_exception_handler('Core\Error::exceptionHandler');
+ini_set('display_errors', Config::showErrors() ? '1' : '0');
+ini_set('display_startup_errors', Config::showErrors() ? '1' : '0');
+ini_set('log_errors', '1');
 
+set_error_handler([Error::class, 'errorHandler']);
+set_exception_handler([Error::class, 'exceptionHandler']);
+
+/**
+ * Security headers (when not already set by the web server)
+ */
+if (!headers_sent()) {
+    header('X-Content-Type-Options: nosniff');
+    header('X-Frame-Options: SAMEORIGIN');
+    header('Referrer-Policy: strict-origin-when-cross-origin');
+    header("Content-Security-Policy: default-src 'self'; style-src 'self' https://cdn.jsdelivr.net; script-src 'self' https://cdn.jsdelivr.net; img-src 'self' data:; font-src 'self' https://cdn.jsdelivr.net; frame-ancestors 'self'");
+}
 
 /**
  * Routing
  */
-$router = new Core\Router();
+$router = new Router();
 
-// Add the routes
 $router->add('', ['controller' => 'Home', 'action' => 'index']);
 $router->add('{controller}/{action}');
 
-if (isset($_SERVER['QUERY_STRING'])) {
-    $router->dispatch($_SERVER['QUERY_STRING']);
-}
+$queryString = $_SERVER['QUERY_STRING'] ?? '';
+$router->dispatch($queryString);
