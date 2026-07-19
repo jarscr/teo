@@ -44,7 +44,7 @@ Variables principales:
 | `APP_ENV`      | Entorno (`local`, `production`, …)               | `local`        |
 | `APP_DEBUG`    | Mostrar errores detallados (`true` / `false`)    | `false`        |
 | `APP_LANG`     | Idioma por defecto                               | `es`           |
-| `APP_VERSION`  | Versión de la aplicación                         | `1.1.1`        |
+| `APP_VERSION`  | Versión de la aplicación                         | `1.0.8`        |
 | `DB_HOST`      | Host de MySQL                                    | `127.0.0.1`    |
 | `DB_NAME`      | Nombre de la base de datos                       | `teo`          |
 | `DB_USER`      | Usuario                                          | `teo`          |

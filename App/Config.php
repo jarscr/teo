@@ -83,7 +83,7 @@ class Config
 
     public static function version(): string
     {
-        return self::env('APP_VERSION', '1.1.1') ?? '1.1.1';
+        return self::env('APP_VERSION', '1.0.8') ?? '1.0.8';
     }
 
     public static function lang(): string
